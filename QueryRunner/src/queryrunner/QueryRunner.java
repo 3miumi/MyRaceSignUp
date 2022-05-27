@@ -56,7 +56,7 @@ public class QueryRunner {
         // TEMPLATE:  m_queryArray.add(new QueryData("QUERY", null, null, false, false));
 
         /**
-         * Query #1 -- Revenue per event
+         * Query #1 -- Revenue per event (query1)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT E.EventName AS \"Event Name\", E.EventDate AS \"Date\", E.Capacity \"Max Capacity\", E.Occupied \"Registrants\", REV.Revenue\n" +
@@ -68,7 +68,7 @@ public class QueryRunner {
         m_querynames[0] = "Revenue per Event";
 
         /**
-         * Query #2 -- Player Total Fees
+         * Query #2 -- Player Total Fees (query2)
          */
         m_queryArray.add(new QueryData("SELECT \n" +
                 "\tP.PlayerFirstname AS \"First Name\", \n" +
@@ -85,7 +85,7 @@ public class QueryRunner {
 
 
         /**
-         * Query #3 -- Loss/Gain by OrganizerID - Parameter Query
+         * Query #3 -- Loss/Gain by OrganizerID - Parameter Query (query9)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT EventID AS \"EventID\", EName AS \"Event Name\", Org AS \"Organizer\", LossOrGain AS \"Loss Or Gain\"\n" +
@@ -98,7 +98,7 @@ public class QueryRunner {
         m_querynames[2] = "Loss/Gain by OrganizerID";
 
         /**
-         * Query #4 -- 10 Popular States for Events
+         * Query #4 -- 10 Popular States for Events(query7)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT \n" +
@@ -113,7 +113,7 @@ public class QueryRunner {
         m_querynames[3] = "10 Popular States for Events";
 
         /**
-         * Query #5 -- 10 Popular States for Players
+         * Query #5 -- 10 Popular States for Players(query 8)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT InnerQuery.State AS '10 Active States'\n" +
@@ -122,7 +122,7 @@ public class QueryRunner {
         m_querynames[4] = "Top 10 Player States";
 
         /**
-         * Query #6 -- Best Race Performances
+         * Query #6 -- Best Race Performances (query5)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT\n" +
@@ -162,7 +162,7 @@ public class QueryRunner {
         m_querynames[5] = "Best Race Performances";
 
         /**
-         * Query #7 --Sports Overview
+         * Query #7 --Sports Overview (query4)
          */
         m_queryArray.add(new QueryData("" +
                 "SELECT P1.SportsType, P2.Total_number \"NumPLayers\", P1.Total_number AS 'NumOrganizers', \n" +
@@ -198,7 +198,7 @@ public class QueryRunner {
         m_querynames[7] = "Players born after X year";
 
         /**
-         * Query #9
+         * Query #9 -- Results of Players born after 2000, parameter: sport type (query6)
          */
         // TODO
         m_queryArray.add(new QueryData(""+
@@ -234,14 +234,32 @@ public class QueryRunner {
                 "WHERE SportsType = ? AND P.DateOfBirth > '2000-01-01'\n" +
                 "ORDER BY D.DistanceValue, E.EventName,  R.ResultRank;", new String [] {"SportType"}, new boolean [] {false}, false, true));
 
-            m_querynames[7] = "Players born after 2000's result";
+            m_querynames[9] = "Players born after 2000's result";
 
         /**
-         * Query #10
+         * Query #10  Events in Washington state that take place between input dates. -- parameter
          */
         // TODO
-        m_queryArray.add(new QueryData("", null, null, false, false));
+        m_queryArray.add(new QueryData(""+"SELECT E.EventName AS EventName, \n" +
+                "\tS.SportsType AS Sport, \n" +
+                "\tD.DistanceValue AS 'Distance(m)', \n" +
+                "\tE.Difficulty AS Difficulty, \n" +
+                "\tCAST(E.EventDate AS DATE) AS Date, \n" +
+                "\tL.ZipCode AS Zip\n" +
+                "FROM Event AS E\n" +
+                "\tJOIN Location AS L\n" +
+                "\t\tON E.LocationID = L.LocationID\n" +
+                "\tJOIN Event_has_Distance AS EHD\n" +
+                "\t\tON E.EventID = EHD.EventID\n" +
+                "\tJOIN Distance AS D\n" +
+                "\t\tON EHD.DistanceID = D.DistanceID\n" +
+                "\tJOIN Sport AS S\n" +
+                "\t\tON E.SportID = S.SportID\n" +
+                "WHERE E.EventDate BETWEEN ? AND ?\n" +
+                "ORDER BY E.EventDate, S.SportsType, E.Difficulty, E.EventName ASC;", new String [] {"Date From", "Date TO"}, new boolean [] {false,false}, false, true));
+        m_querynames[10] = "Events in Washington state";
     }
+
 
 
     public int GetTotalQueries()
