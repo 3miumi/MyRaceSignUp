@@ -11,9 +11,9 @@ package queryrunner;
  *
  * @author mckeem
  */
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.Color;
 import javax.swing.*;
 
 public class QueryFrame extends javax.swing.JFrame {
@@ -25,6 +25,13 @@ public class QueryFrame extends javax.swing.JFrame {
  * @param queryrunnerObj 
  */
     public QueryFrame(QueryRunner queryrunnerObj) {
+        getContentPane().setBackground(new java.awt.Color(237, 235, 225));
+        JLabel label = new JLabel();
+        label.setIcon(new ImageIcon("LOGO.png"));
+        Dimension size = label.getPreferredSize();
+        label.setBounds(705,210,size.width,size.height);
+        label.setOpaque(true);
+        getContentPane().add(label);
         initComponents();
         m_parmlabels = new JLabel[]{jLabel1, jLabel2, jLabel3, jLabel4, jLabel9, jLabel10, jLabel11, jLabel12};        
         m_textvals = new JTextField[] { jTextField5, jTextField6,jTextField7,jTextField8,jTextField9,jTextField10,jTextField11,jTextField12};
@@ -42,6 +49,7 @@ public class QueryFrame extends javax.swing.JFrame {
         jBtnRunQuery.setEnabled(false);
         
         jLabel14.setText(m_queryrunner.GetProjectTeamApplication());
+        jLabel14.setForeground(new java.awt.Color(204,139,49));
      }
 
     
