@@ -25,11 +25,8 @@ public class QueryRunner {
         m_updateAmount = 0;
         m_queryArray = new ArrayList<>();
         m_error = "";
-        m_querynames = new String[10];
-        m_queryParamNames = new String[10];
-
-
-        // TODO - You will need to change the queries below to match your queries.
+        m_querynames = new String[12];
+        m_queryParamNames = new String[12];
 
         // You will need to put your Project Application in the below variable
 
@@ -44,12 +41,6 @@ public class QueryRunner {
         //    LikeParameter Array  is an array I regret having to add, but it is necessary to tell QueryRunner which parameter has a LIKE Clause. If you have no parameters, put in null. Otherwise put in false for parameters that don't use 'like' and true for ones that do.
         //    IsItActionQuery (e.g. Mark it true if it is, otherwise false)
         //    IsItParameterQuery (e.g.Mark it true if it is, otherwise false)
-
-//        m_queryArray.add(new QueryData("Select * from contact", null, null, false, false));   // THIS NEEDS TO CHANGE FOR YOUR APPLICATION
-//        m_queryArray.add(new QueryData("Select * from contact where contact_id=?", new String [] {"CONTACT_ID"}, new boolean [] {false},  false, true));        // THIS NEEDS TO CHANGE FOR YOUR APPLICATION
-//        m_queryArray.add(new QueryData("Select * from contact where contact_name like ?", new String [] {"CONTACT_NAME"}, new boolean [] {true}, false, true));        // THIS NEEDS TO CHANGE FOR YOUR APPLICATION
-//        m_queryArray.add(new QueryData("insert into contact (contact_id, contact_name, contact_salary) values (?,?,?)",new String [] {"CONTACT_ID", "CONTACT_NAME", "CONTACT_SALARY"}, new boolean [] {false, false, false}, true, true));// THIS NEEDS TO CHANGE FOR YOUR APPLICATION
-
         // TEMPLATE:  m_queryArray.add(new QueryData("QUERY", null, null, false, false));
 
         /**
@@ -197,7 +188,6 @@ public class QueryRunner {
         /**
          * Query #9 -- Results of Players born after 2000, parameter: sport type (query6)
          */
-        // TODO
         m_queryArray.add(new QueryData("" +
                 "SELECT\n" +
                 "\tE.EventName \"Event\",\n" +
@@ -236,7 +226,6 @@ public class QueryRunner {
         /**
          * Query #10  Events in Washington state that take place between input dates. -- parameter
          */
-        // TODO
         m_queryArray.add(new QueryData("" + "SELECT E.EventName AS EventName, \n" +
                 "\tS.SportsType AS Sport, \n" +
                 "\tD.DistanceValue AS 'Distance(m)', \n" +
@@ -255,8 +244,23 @@ public class QueryRunner {
                 "WHERE E.EventDate BETWEEN ? AND ?\n" +
                 "ORDER BY E.EventDate, S.SportsType, E.Difficulty, E.EventName ASC;", new String[]{"Date From", "Date TO"}, new boolean[]{false, false}, false, true));
         m_querynames[9] = "Events in Washington state";
-    }
 
+        /**
+         * Query #11 - Add new Sport -- parameter
+         */
+
+        m_queryArray.add(new QueryData("" +
+                "INSERT INTO Sport VALUES(?,?);" , new String[] {"SportID","New sport"}, new boolean[]{false}, true, true));
+
+        m_querynames[10] = "Add new sport!";
+
+        /**
+         * Query #12 - View Sports
+         */
+        m_queryArray.add(new QueryData("Select * from Sport;", null, null, false, false));
+        m_querynames[11] = "View All Sports";
+
+    }
 
     public int GetTotalQueries() {
         return m_queryArray.size();
@@ -360,20 +364,28 @@ public class QueryRunner {
         return m_error;
     }
 
-    // Returns the query names array
+    /**
+     * gets a copy of the queryname array from the QueryRunner object
+     *
+     * @return string array copy
+     */
     public String[] getNameArray() {
-        String[] copy = new String[10];
-        for (int i = 0; i < 10; i++) {
+        String[] copy = new String[12];
+        for (int i = 0; i < 12; i++) {
             copy[i] = m_querynames[i];
         }
 
         return copy;
     }
 
-    // Returns the query param names
+    /**
+     * gets a copy of the paramName array from the QueryRunner object
+     *
+     * @return string array copy
+     */
     public String[] getParamArray() {
-        String[] copy = new String[10];
-        for (int i = 0; i < 10; i++) {
+        String[] copy = new String[12];
+        for (int i = 0; i < 12; i++) {
             copy[i] = m_queryParamNames[i];
         }
 
@@ -392,10 +404,8 @@ public class QueryRunner {
     /**
      * @param args the command line arguments
      */
-
-
     public static void main(String[] args) {
-        // TODO code application logic here
+
 
         final QueryRunner queryrunner = new QueryRunner();
 
@@ -449,7 +459,7 @@ public class QueryRunner {
                 // NOTE - You can look at the QueryRunner API calls that are in QueryFrame.java for assistance. You should not have to 
                 //    alter any code in QueryJDBC, QueryData, or QueryFrame to make this work.
 
-                System.out.println("Welcome to the DB, connecting....");
+                welcome();
                 Scanner scanner = new Scanner(System.in);
 
 
@@ -458,25 +468,26 @@ public class QueryRunner {
                 String szUser = "mm_cpsc502101team02";
                 String szPass = "mm_cpsc502101team02Pass-";
                 String szDatabase = "mm_cpsc502101team02";
-
-//                System.out.println("Enter the Hostname: ");
-//                szHost = scanner.nextLine();
-//                System.out.println("Enter the Username: ");
-//                szUser = scanner.nextLine();
-//                System.out.println("Enter the Password: ");
-//                szPass = scanner.nextLine();
-//                System.out.println("Enter the Database: ");
-//                szDatabase = scanner.nextLine();
-
-                Scanner sc = new Scanner(System.in);
+                boolean connected =false;  // Successful connection to the DB
                 int choice;
-                boolean connected;  // Successful connection to the DB
+                do {
+                    System.out.print("Enter the Hostname: ");
+                    szHost = scanner.nextLine();
+                    System.out.print("Enter the Username: ");
+                    szUser = scanner.nextLine();
+                    System.out.print("Enter the Password: ");
+                    szPass = scanner.nextLine();
+                    System.out.print("Enter the Database: ");
+                    szDatabase = scanner.nextLine();
+                    // Connect to the database
+                    connected = queryrunner.Connect(szHost, szUser, szPass, szDatabase);
+                    if (connected) {
+                        System.out.println("Connected!");
+                    } else{
+                        System.out.println("Input has error, please try again!");
+                    }
+                }while(!connected);
 
-                // Connect to the database
-                connected = queryrunner.Connect(szHost, szUser, szPass, szDatabase);
-                if (connected) {
-                    System.out.println("Connected!");
-                }
 
                 do {
 
@@ -527,12 +538,12 @@ public class QueryRunner {
 
             choice = getChoice();
             // add one more condition
-            while (choice > 11 || choice < 1) {
+            while (choice > 13 || choice < 1) {
                 System.out.println("Invalid number! Please enter again: ");
                 choice = getChoice();
             }
             // Go into query parsing if not equal to quit value
-            if (choice < 12 && choice > 0) {
+            if (choice < 14 && choice > 1) {
                 // Get the choice from the user (choice = choice - 2)
                 queryChoice = choice - 2;
 
@@ -558,6 +569,7 @@ public class QueryRunner {
                     bOk = queryrunner.ExecuteUpdate(queryChoice, parmString);
                     if (bOk) {
                         rowsAffected = queryrunner.GetUpdateAmount();
+                        System.out.println(rowsAffected + " added!");
                     } else {
                         System.out.println(queryrunner.GetError());
                     }
@@ -587,6 +599,20 @@ public class QueryRunner {
         } while (choice != 1);
     }
 
+    /**
+     * Welcome method that provides on screen information to the suer
+     */
+    public static void welcome() {
+        String welcome = "Welcome the MyRaceSignUp.com console application!\n" +
+                "Follow the on screen prompts to access the database" +
+                " and run a handful of queries.\nEnter '1' to quit " +
+                "from each section. Enjoy!";
+        System.out.println(welcome);
+    }
+
+    /**
+     * Prints the main menu to the screen
+     */
     public static void printMainMenu() {
         System.out.println();
         System.out.println("======MYRACESIGNUP.COM======");
@@ -595,6 +621,11 @@ public class QueryRunner {
         System.out.println("2. Run Queries");
     }
 
+    /**
+     * Prints the menu containing the available queries to run
+     *
+     * @param qNames string array of the available query names to run
+     */
     public static void printQueryMenu(String[] qNames) {
         System.out.println("======MYRACESIGNUP.COM======");
         System.out.println("============================");
@@ -605,6 +636,13 @@ public class QueryRunner {
         }
     }
 
+    /**
+     * Prompts the user to enter a number based on values from the on screen
+     * prompt and returns the user input as long as it is a number, otherwise
+     * the user it prompted until it is correct.
+     *
+     * @return number that the user entered.
+     */
     public static int getChoice() {
         String choice;  // string value of the user choice
         int ch; // converted integer value of the line
@@ -619,7 +657,6 @@ public class QueryRunner {
             System.out.println("Please enter a number only!");
             ch = getChoice();
         }
-
         return ch;
     }
 }

@@ -25,6 +25,8 @@ public class QueryFrame extends javax.swing.JFrame {
  * @param queryrunnerObj 
  */
     public QueryFrame(QueryRunner queryrunnerObj) {
+        JPanel panel = new JPanel();
+
         getContentPane().setBackground(new java.awt.Color(237, 235, 225));
         JLabel label = new JLabel();
         label.setIcon(new ImageIcon("LOGO.png"));
@@ -33,7 +35,7 @@ public class QueryFrame extends javax.swing.JFrame {
         label.setOpaque(true);
         getContentPane().add(label);
         initComponents();
-        m_parmlabels = new JLabel[]{jLabel1, jLabel2, jLabel3, jLabel4, jLabel9, jLabel10, jLabel11, jLabel12};        
+        m_parmlabels = new JLabel[]{jLabel1, jLabel2, jLabel3, jLabel4, jLabel9, jLabel10, jLabel11, jLabel12};
         m_textvals = new JTextField[] { jTextField5, jTextField6,jTextField7,jTextField8,jTextField9,jTextField10,jTextField11,jTextField12};
         m_queryrunner = queryrunnerObj;
         // Find out how many queries there are and set up combox box
@@ -292,11 +294,12 @@ public class QueryFrame extends javax.swing.JFrame {
         String szQuery = m_queryrunner.GetQueryText(m_queryChoice);
         this.jTextArea1.setText(szQuery);
         System.out.println("choice is " + szChoice);
-        this.jPanel2.setVisible(false);        
-         
+        this.jPanel2.setVisible(false);
+
         if (this.m_queryrunner.isParameterQuery(m_queryChoice))
-        {           
-            this.jPanel1.setVisible(true);                        
+        {
+            this.jPanel1.setBackground(new java.awt.Color(237, 235, 225));
+            this.jPanel1.setVisible(true);
             int nAmt = this.m_queryrunner.GetParameterAmtForQuery(m_queryChoice);
             for (int i=0; i< nAmt; i++)
             {
@@ -377,13 +380,15 @@ public class QueryFrame extends javax.swing.JFrame {
                     jPanel2.remove(m_scrollPane);
                 }
                 m_jTable = new JTable(allData, headers);
-                
+
                 m_jTable.setBounds(100, 100, 100, 80);
                 Color ivory=new Color(255,255,208);
                 m_jTable.setOpaque(false);
-                m_jTable.setBackground(ivory);           
+                m_jTable.setBackground(ivory);
                 m_scrollPane = new JScrollPane(m_jTable);
-                jPanel2.add(m_scrollPane);// add table in panel using add() method                      
+                jPanel2.add(m_scrollPane);// add table in panel using add() method
+
+
                 this.setVisible(true);                
             }
             else
