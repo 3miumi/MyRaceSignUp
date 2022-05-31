@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package queryrunner;
-
 import javax.management.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
