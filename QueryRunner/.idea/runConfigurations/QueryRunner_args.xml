@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="QueryRunner-args" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="queryrunner.QueryRunner" />
+    <module name="QueryRunner" />
+    <option name="PROGRAM_PARAMETERS" value="-console" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="queryrunner.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

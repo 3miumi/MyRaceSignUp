@@ -32,19 +32,23 @@ public class QueryFrame extends javax.swing.JFrame {
         label.setIcon(new ImageIcon("LOGO.png"));
         Dimension size = label.getPreferredSize();
         label.setBounds(705,210,size.width,size.height);
+
         label.setOpaque(true);
         getContentPane().add(label);
         initComponents();
         m_parmlabels = new JLabel[]{jLabel1, jLabel2, jLabel3, jLabel4, jLabel9, jLabel10, jLabel11, jLabel12};
         m_textvals = new JTextField[] { jTextField5, jTextField6,jTextField7,jTextField8,jTextField9,jTextField10,jTextField11,jTextField12};
         m_queryrunner = queryrunnerObj;
+        String[] qNames = m_queryrunner.getNameArray();
         // Find out how many queries there are and set up combox box
         // If it is a grid query, then enable jtable
         int nAmt = m_queryrunner.GetTotalQueries();
 
         for (int i=0; i < nAmt; i++)
         {
-            this.jComboBoxQuery.addItem("Query " + (i+1));
+
+            this.jComboBoxQuery.addItem((i+1) +". "+qNames[i] );
+//            this.jComboBoxQuery.addItem("Query  " + (i+1));
 
         }
         jComboBoxQuery.setEnabled(false);
@@ -187,7 +191,7 @@ public class QueryFrame extends javax.swing.JFrame {
                 jComboBox1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jComboBoxQuery, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 190, 120, -1));
+        getContentPane().add(jComboBoxQuery, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 192, 200, -1));
 
         jLabel5.setText("Database");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 90, 10));
@@ -215,7 +219,7 @@ public class QueryFrame extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jBtnRunQuery, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 190, -1, -1));
+        getContentPane().add(jBtnRunQuery, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 190, -1, -1));
 
         jPasswordField1.setText("jPasswordField1");
         jPasswordField1.setNextFocusableComponent(jTextFieldDatabase);
@@ -288,9 +292,16 @@ public class QueryFrame extends javax.swing.JFrame {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         
         jTextArea2.setText("");
-        String szChoice = (String)jComboBoxQuery.getSelectedItem();        
-        String szStripChoice = szChoice.substring(6);
-        m_queryChoice = Integer.parseInt(szStripChoice)-1;        
+        String szChoice = (String)jComboBoxQuery.getSelectedItem();
+//        int iend = szChoice.indexOf(".");
+
+        int pos = 0;
+        while (pos < szChoice.length() && Character.isDigit(szChoice.charAt(pos)))
+            pos++;
+
+
+        String szStripChoice = szChoice.substring(0,pos);
+        m_queryChoice = Integer.parseInt(szStripChoice)-1;
         String szQuery = m_queryrunner.GetQueryText(m_queryChoice);
         this.jTextArea1.setText(szQuery);
         System.out.println("choice is " + szChoice);

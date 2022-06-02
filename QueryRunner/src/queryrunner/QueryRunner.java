@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package queryrunner;
+
 import javax.management.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,20 +28,12 @@ public class QueryRunner {
         m_querynames = new String[12];
         m_queryParamNames = new String[12];
 
-        // You will need to put your Project Application in the below variable
+        // Project Application name
+        this.m_projectTeamApplication = "MyRaceSignUp.com";
 
-        this.m_projectTeamApplication = "MyRaceSignUp.com";    // THIS NEEDS TO CHANGE FOR YOUR APPLICATION
-
-        // Each row that is added to m_queryArray is a separate query. It does not work on Stored procedure calls.
-        // The 'new' Java keyword is a way of initializing the data that will be added to QueryArray. Please do not change
-        // Format for each row of m_queryArray is: (QueryText, ParamaterLabelArray[], LikeParameterArray[], IsItActionQuery, IsItParameterQuery)
-
-        //    QueryText is a String that represents your query. It can be anything but Stored Procedure
-        //    Parameter Label Array  (e.g. Put in null if there is no Parameters in your query, otherwise put in the Parameter Names)
-        //    LikeParameter Array  is an array I regret having to add, but it is necessary to tell QueryRunner which parameter has a LIKE Clause. If you have no parameters, put in null. Otherwise put in false for parameters that don't use 'like' and true for ones that do.
-        //    IsItActionQuery (e.g. Mark it true if it is, otherwise false)
-        //    IsItParameterQuery (e.g.Mark it true if it is, otherwise false)
-        // TEMPLATE:  m_queryArray.add(new QueryData("QUERY", null, null, false, false));
+        //************************
+        //***QUERY DECLARATIONS***
+        //************************
 
         /**
          * Query #1 -- Revenue per event (query1)
@@ -219,8 +212,7 @@ public class QueryRunner {
                 "\t\tJOIN Distance AS D ON ED.DistanceID = D.DistanceID) AS AVERAGE ON AVERAGE.PlayerID = P.PlayerID AND AVERAGE.EventID = E.EventID\n" +
                 "WHERE SportsType = ? AND P.DateOfBirth > '2000-01-01'\n" +
                 "ORDER BY D.DistanceValue, E.EventName,  R.ResultRank;", new String[]{"SportType"}, new boolean[]{false}, false, true));
-
-        m_querynames[8] = "Players born after 2000's result";
+        m_querynames[8] = "Players born after 2000's result with X sport type";
 
         /**
          * Query #10  Events in Washington state that take place between input dates. -- parameter
@@ -247,10 +239,8 @@ public class QueryRunner {
         /**
          * Query #11 - Add new Sport -- parameter
          */
-
         m_queryArray.add(new QueryData("" +
-                "INSERT INTO Sport VALUES(?,?);" , new String[] {"SportID","New sport"}, new boolean[]{false}, true, true));
-
+                "INSERT INTO Sport (SportsType) VALUES(?);" , new String[] {"New sport"}, new boolean[]{false}, true, true));
         m_querynames[10] = "Add new sport!";
 
         /**
@@ -258,8 +248,8 @@ public class QueryRunner {
          */
         m_queryArray.add(new QueryData("Select * from Sport;", null, null, false, false));
         m_querynames[11] = "View All Sports";
-
     }
+
 
     public int GetTotalQueries() {
         return m_queryArray.size();
@@ -396,79 +386,71 @@ public class QueryRunner {
     private String m_projectTeamApplication;
     private ArrayList<QueryData> m_queryArray;
     private int m_updateAmount;
-    private String[] m_querynames;
-    private String[] m_queryParamNames;
-    public static final int QUIT = 1;
+    private String[] m_querynames;  // String array with query names
+    private String[] m_queryParamNames;  // String array with param names
+
 
     /**
+     * Main method. To run application in console mode, create separate
+     * configuration with "-console" placed in the program arguments.
+     *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
-
         final QueryRunner queryrunner = new QueryRunner();
 
+        //************************
+        //****GUI APPLICATION*****
+        //************************
+        //GUI IMPROVEMENT:
+        //1. Changed background color
+        //2. Added background image
+        //3. Changed name text color
+        //4. The query drag name changed.
         if (args.length == 0) {
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-
                     new QueryFrame(queryrunner).setVisible(true);
                 }
             });
-        } else {
+        }
+        //************************
+        //**CONSOLE APPLICATION***
+        //************************
+        else {
+
             if (args[0].equals("-console")) {
-
-                // TODO
-                // You should code the following functionality:
-
-                //    You need to determine if it is a parameter query. If it is, then
-                //    you will need to ask the user to put in the values for the Parameters in your query
-                //    you will then call ExecuteQuery or ExecuteUpdate (depending on whether it is an action query or regular query)
-                //    if it is a regular query, you should then get the data by calling GetQueryData. You should then display this
-                //    output. 
-                //    If it is an action query, you will tell how many row's were affected by it.
-                // 
-                //    This is Psuedo Code for the task:  
-                //    Connect()
-                //    n = GetTotalQueries()
-                //    for (i=0;i < n; i++)
-                //    {
-                //       Is it a query that Has Parameters
-                //       Then
-                //           amt = find out how many parameters it has
-                //           Create a paramter array of strings for that amount
-                //           for (j=0; j< amt; j++)
-                //              Get The Paramater Label for Query and print it to console. Ask the user to enter a value
-                //              Take the value you got and put it into your parameter array
-                //           If it is an Action Query then
-                //              call ExecuteUpdate to run the Query
-                //              call GetUpdateAmount to find out how many rows were affected, and print that value
-                //           else
-                //               call ExecuteQuery 
-                //               call GetQueryData to get the results back
-                //               print out all the results
-                //           end if
-                //      }
-                //    Disconnect()
-
+                int choice;  // User input value
+                boolean connected;  // Successful connection to the DB
+                String cont = " ";
+                String szHost;  // Host values of the DB
+                String szUser;  // Username of the DB
+                String szPass;  // Password of the DB
+                String szDatabase;  // DB name
 
                 // NOTE - IF THERE ARE ANY ERRORS, please print the Error output
-                // NOTE - The QueryRunner functions call the various JDBC Functions that are in QueryJDBC. If you would rather code JDBC
-                // functions directly, you can choose to do that. It will be harder, but that is your option.
-                // NOTE - You can look at the QueryRunner API calls that are in QueryFrame.java for assistance. You should not have to 
-                //    alter any code in QueryJDBC, QueryData, or QueryFrame to make this work.
-
+                // Welcome the user to the program.
                 welcome();
                 Scanner scanner = new Scanner(System.in);
 
+                cont = " ";
+                szHost = "cs100";
+                szUser = "mm_cpsc502101team02";
+                szPass = "mm_cpsc502101team02Pass-";
+                szDatabase = "mm_cpsc502101team02";
 
-                String cont = " ";
-                String szHost = "cs100";
-                String szUser = "mm_cpsc502101team02";
-                String szPass = "mm_cpsc502101team02Pass-";
-                String szDatabase = "mm_cpsc502101team02";
-                boolean connected =false;  // Successful connection to the DB
-                int choice;
+                // Get the user credentials to access the database
+//                System.out.print("Enter the Hostname: ");
+//                szHost = scanner.nextLine();
+//                System.out.print("Enter the Username: ");
+//                szUser = scanner.nextLine();
+//                System.out.print("Enter the Password: ");
+//                szPass = scanner.nextLine();
+//                System.out.print("Enter the Database: ");
+//                szDatabase = scanner.nextLine();
+
+                // Connect to the database, re-prompt if incorrect
+                connected = queryrunner.Connect(szHost, szUser, szPass, szDatabase);
                 do {
                     System.out.print("Enter the Hostname: ");
                     szHost = scanner.nextLine();
@@ -488,23 +470,25 @@ public class QueryRunner {
                 }while(!connected);
 
 
+                // Enter the main menu until user quits
                 do {
-
                     // Print the menu choice screen, until the user selects quit
                     printMainMenu();
+
                     // Get the choice from the user
                     choice = getChoice();
 
-                    // add
-                    if (choice == 2) {
-                        // Enter query screen
-                        enterQueryScreen(queryrunner);
-                    }
+                    // Validate the user input
                     while (choice > 2 || choice < 1) {
                         System.out.println("Invalid number! Please enter again: ");
                         choice = getChoice();
                     }
 
+                    // Enter the query section
+                    if (choice == 2) {
+                        // Enter query screen
+                        enterQueryScreen(queryrunner);
+                    }
                 } while (choice != 1);
 
                 // Disconnect from the database
@@ -513,20 +497,28 @@ public class QueryRunner {
         }
     }
 
-
+    /**
+     * Core logic of the console application that handles user input, accesses
+     * and runs the various queries and handles the sorting of parameters
+     *
+     * @param queryrunner QueryRunner object
+     */
     public static void enterQueryScreen(QueryRunner queryrunner) {
         String[] colHeaders;  // column names
         String[][] queryData;  // query result set
         String[] qNames = queryrunner.getNameArray();
         String[] pNames = queryrunner.getParamArray();
-        String paramInput;
+        String paramInput;  // Input taken from the user
+        int numQueries = queryrunner.GetTotalQueries();
         int paramAmnt;  // Number of parameters in the query
         int choice;  // Choice of the query to run from the user
         int queryChoice;  // index of query chosen
-        int rowsAffected;
-        boolean bOk = true;
+        int rowsAffected;  // Number of rows returned from the query
+        boolean nullValReturn;
+        boolean bOk = true;  // boolean val to confirm successful JDBC actions
         Scanner sc = new Scanner(System.in);
 
+        // Prompt the user for queries until satisfied
         do {
             String[] parmString = {};  // array of parameters
 
@@ -534,18 +526,17 @@ public class QueryRunner {
             printQueryMenu(qNames);
 
             // Get the choice from the user
-
             choice = getChoice();
-            // add one more condition
-            while (choice > 13 || choice < 1) {
+
+            // Confirm the number is valid
+            while (choice > (numQueries + 1) || choice < 1) {
                 System.out.println("Invalid number! Please enter again: ");
                 choice = getChoice();
             }
             // Go into query parsing if not equal to quit value
-            if (choice < 14 && choice > 1) {
+            if (choice <= (numQueries + 1) && choice > 1) {
                 // Get the choice from the user (choice = choice - 2)
                 queryChoice = choice - 2;
-
 
                 // Determine if query has parameters, get params if true
                 if (queryrunner.isParameterQuery(queryChoice)) {
@@ -561,6 +552,7 @@ public class QueryRunner {
                         // Add the user input to the param string to execute
                         parmString[i] = paramInput;
                     }
+                    System.out.println();
                 }
 
                 // If an action query, execute the action
@@ -568,30 +560,48 @@ public class QueryRunner {
                     bOk = queryrunner.ExecuteUpdate(queryChoice, parmString);
                     if (bOk) {
                         rowsAffected = queryrunner.GetUpdateAmount();
-                        System.out.println(rowsAffected + " added!");
+                        System.out.println(rowsAffected + " row added!");
+                        System.out.println();
                     } else {
-                        System.out.println(queryrunner.GetError());
+                        System.out.println(queryrunner.GetError() + "\n");
                     }
                 }
-                // Otherwise, is a parameter query
+                // Otherwise, it is a parameter query
                 else {
                     String line = "";
                     bOk = queryrunner.ExecuteQuery(queryChoice, parmString);
                     if (bOk) {
                         colHeaders = queryrunner.GetQueryHeaders();
                         queryData = queryrunner.GetQueryData();
-                        for (int i = 0; i < colHeaders.length; i++) {
-                            System.out.printf("%-26s", colHeaders[i]);
-                            line += "--------------------------";
-                        }
-                        System.out.println("\n" + line);
-                        for (int i = 0; i < queryData.length; i++) {
-                            for (int j = 0; j < queryData[i].length; j++) {
-                                System.out.printf("%-26s", queryData[i][j]);
+                        nullValReturn = (queryData[0][0].equals(""));
+
+                        // Display results if the return row is not null
+                        if(!nullValReturn) {
+                            for (int i = 0; i < colHeaders.length; i++) {
+                                System.out.printf("%-26s", colHeaders[i]);
+                                line += "--------------------------";
+                            }
+                            System.out.println("\n" + line);
+                            for (int i = 0; i < queryData.length; i++) {
+                                for (int j = 0; j < queryData[i].length; j++) {
+                                    System.out.printf("%-26s", queryData[i][j]);
+                                }
+                                System.out.println();
                             }
                             System.out.println();
                         }
-                        System.out.println();
+                        // Otherwise, display headers and empty result set
+                        else {
+                            for (int i = 0; i < colHeaders.length; i++) {
+                                System.out.printf("%-26s", colHeaders[i]);
+                                line += "--------------------------";
+                            }
+                            System.out.println("\n" + line);
+                            System.out.println("No Results returned!\n");
+                        }
+                    }
+                    else {
+                        System.out.println(queryrunner.GetError());
                     }
                 }
             }
@@ -626,17 +636,19 @@ public class QueryRunner {
      * @param qNames string array of the available query names to run
      */
     public static void printQueryMenu(String[] qNames) {
+        int numQueries = qNames.length;
+
         System.out.println("======MYRACESIGNUP.COM======");
         System.out.println("============================");
         System.out.println("1. Quit");
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numQueries; i++) {
             System.out.println(i + 2 + ". " + qNames[i]);
         }
     }
 
     /**
-     * Prompts the user to enter a number based on values from the on screen
+     * Prompts the user to enter a number based on values from the on-screen
      * prompt and returns the user input as long as it is a number, otherwise
      * the user it prompted until it is correct.
      *
@@ -659,5 +671,4 @@ public class QueryRunner {
         return ch;
     }
 }
-
 
